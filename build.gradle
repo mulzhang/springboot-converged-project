@@ -1,0 +1,92 @@
+//声明gradle脚本吱声需要使用的资源
+buildscript {
+    repositories {
+        mavenLocal()
+        maven{
+//            allowInsecureProtocol = true
+            url "https://maven.aliyun.com/repository/public"
+        }
+        mavenCentral()
+    }
+    ext {
+        //控制项目版本
+        springBootVersion = '2.7.3'
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+// 所有模块/项目的通用配置
+allprojects {
+    //指定编辑器
+    apply plugin: 'idea'
+    //配置项目信息
+    group 'org.example'
+    version '1.0-SNAPSHOT'
+}
+
+
+
+// 子模块/项目的统一配置
+subprojects {
+    //指定需要的插件
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    // 指定JDK版本
+    sourceCompatibility = 17
+    targetCompatibility = 17
+    // 指定编码格式
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+    repositories {
+        //优先从本地仓库获取
+        mavenLocal()
+        // 从阿里云或者公司仓库获取
+        maven{
+//            allowInsecureProtocol = true
+            url "https://maven.aliyun.com/repository/public"
+        }
+        // 从中央仓库获取
+        mavenCentral()
+    }
+    //配置全局依赖版本信息
+    ext {
+        mysqlConnectorVersion = "8.0.13"
+        mybatisStarterVersion = "2.2.2"
+        fastjsonVersion = "1.2.54"
+        slf4jVersion = "1.7.16"
+        commonsVersion = "3.0"
+        junitVersion = "4.12"
+    }
+    //配置子模块依赖
+    dependencies {
+//        api("org.springframework.boot:$springBootVersion")
+//        api("io.spring.dependency-management:$managementVersion")
+        api("javax.servlet:javax.servlet-api:4.0.1")
+        api("org.springframework.boot:spring-boot-starter-web")
+        // Mybatis
+        api("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisStarterVersion")
+        // Log4j2
+        api("org.springframework.boot:spring-boot-starter-log4j2")
+        // JDBC Driver
+        api("mysql:mysql-connector-java:$mysqlConnectorVersion")
+        // JSON
+        api("com.alibaba:fastjson:$fastjsonVersion")
+        // Apache Commons
+        api("org.apache.commons:commons-lang3:3.8.1")
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        // 单元测试
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("junit:junit:4.12")
+    }
+    configurations {
+        //移除spring boot 默认logger依赖
+        all*.exclude module: 'spring-boot-starter-logging'
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+}

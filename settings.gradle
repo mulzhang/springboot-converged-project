@@ -1,0 +1,5 @@
+rootProject.name = 'springboot-converged-project'
+include ':project-first'
+findProject(':project-first')?.name = 'project-first'
+include 'project-second'
+findProject(':project-second')?.name = 'project-second'
