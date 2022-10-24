@@ -32,7 +32,6 @@ allprojects {
 subprojects {
     //指定需要的插件
     apply plugin: 'java-library'
-    apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     // 指定JDK版本
     sourceCompatibility = 17
@@ -81,6 +80,13 @@ subprojects {
         // 单元测试
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("junit:junit:4.12")
+    }
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:2.7.3"
+//            mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}"
+//            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
     }
     configurations {
         //移除spring boot 默认logger依赖
